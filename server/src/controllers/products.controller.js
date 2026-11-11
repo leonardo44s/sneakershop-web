@@ -42,4 +42,39 @@ async function listProducts(req, res, next) {
   }
 }
 
-module.exports = { listProducts };
+async function getProductById(req, res, next) {
+  try {
+    const id = Number.parseInt(req.params.id, 10);
+
+    if (!Number.isInteger(id) || id <= 0) {
+      return res.status(404).json({ message: 'Producto no encontrado' });
+    }
+
+    const product = await prisma.product.findFirst({
+      where: { id, activo: true },
+      include: {
+        brand: true,
+        sizes: { orderBy: { talla: 'asc' } },
+      },
+    });
+
+    if (!product) {
+      return res.status(404).json({ message: 'Producto no encontrado' });
+    }
+
+    return res.json({
+      id: product.id,
+      nombre: product.nombre,
+      descripcion: product.descripcion,
+      marca: product.brand.nombre,
+      precio: Number(product.precio),
+      imagenes: product.imagenes,
+      tallas: product.sizes.map((s) => ({ talla: s.talla, stock: s.stock })),
+    });
+  } catch (error) {
+    return next(error);
+  }
+}
+
+
+module.exports = { listProducts, getProductById };
