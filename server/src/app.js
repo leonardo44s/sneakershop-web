@@ -4,6 +4,7 @@ const cors = require('cors');
 const productsRoutes = require('./routes/products.routes');
 const authRoutes = require('./routes/auth.routes');
 const adminRoutes = require('./routes/admin.routes');
+const catalogRoutes = require('./routes/catalog.routes');
 const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
@@ -18,6 +19,7 @@ app.get('/api/health', (req, res) => {
 app.use('/api/products', productsRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api', catalogRoutes);
 
 app.use((req, res) => {
   res.status(404).json({ message: 'Ruta no encontrada' });

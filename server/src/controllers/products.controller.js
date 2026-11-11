@@ -1,4 +1,5 @@
 const prisma = require('../lib/prisma');
+const { buildProductWhere } = require('../utils/productFilters');
 
 function toInt(value, defaultValue) {
   const n = Number.parseInt(value, 10);
@@ -10,7 +11,7 @@ async function listProducts(req, res, next) {
     const page = Math.max(toInt(req.query.page, 1), 1);
     const limit = Math.min(Math.max(toInt(req.query.limit, 12), 1), 50);
 
-    const where = { activo: true };
+    const where = buildProductWhere(req.query);
 
     const [total, products] = await Promise.all([
       prisma.product.count({ where }),
