@@ -1,7 +1,8 @@
 const { Router } = require('express');
+const { listProducts } = require('../controllers/products.controller');
 
 const router = Router();
 
-// US-04 (Justo): aquí van las rutas de productos
+router.get('/', listProducts);
 
 module.exports = router;
