@@ -1,7 +1,12 @@
 const { Router } = require('express');
+const { verifyToken, verifyAdmin } = require('../middleware/auth');
 
 const router = Router();
 
-// US-07 (Richard): aquí van las rutas protegidas del administrador
+router.use(verifyToken, verifyAdmin);
+
+router.get('/me', (req, res) => {
+  res.json({ user: req.user });
+});
 
 module.exports = router;
