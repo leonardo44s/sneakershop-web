@@ -1,9 +1,18 @@
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/useCart.js';
+import { useAuth } from '../context/useAuth.js';
 import '../styles/cart.css';
+import '../styles/header.css';
 
 export default function Header() {
   const { totalItems } = useCart();
+  const { user, isLoggedIn, logout } = useAuth();
+  const navigate = useNavigate();
+
+  function handleLogout() {
+    logout();
+    navigate('/');
+  }
 
   return (
     <header className="header">
@@ -23,6 +32,16 @@ export default function Header() {
             Carrito
             {totalItems > 0 && <span className="cart-badge">{totalItems}</span>}
           </NavLink>
+          {isLoggedIn ? (
+            <div className="header__user">
+              <span className="header__name">Hola, {user.nombre.split(' ')[0]}</span>
+              <button type="button" className="header__logout" onClick={handleLogout}>
+                Cerrar sesión
+              </button>
+            </div>
+          ) : (
+            <NavLink to="/login">Ingresar</NavLink>
+          )}
         </nav>
       </div>
     </header>
