@@ -210,3 +210,14 @@
     background-position: -200% 0;
   }
 }
+
+.detail__notice a {
+  margin-left: 6px;
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.detail__notice--error {
+  background: #fef2f2;
+  color: #991b1b;
+}
