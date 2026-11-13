@@ -23,4 +23,11 @@ function verifyAdmin(req, res, next) {
   return next();
 }
 
-module.exports = { verifyToken, verifyAdmin };
+function verifyCliente(req, res, next) {
+  if (req.user?.rol !== 'cliente') {
+    return res.status(403).json({ message: 'Solo las cuentas de cliente pueden hacer pedidos' });
+  }
+  return next();
+}
+
+module.exports = { verifyToken, verifyAdmin, verifyCliente };
