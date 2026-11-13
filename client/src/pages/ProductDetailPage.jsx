@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { apiGet } from '../services/api.js';
 import { formatPrice } from '../utils/format.js';
+import { useCart } from '../context/useCart.js';
 import SizeSelector from '../components/SizeSelector.jsx';
 import '../styles/detail.css';
 
@@ -12,9 +13,10 @@ export default function ProductDetailPage() {
 }
 
 function ProductDetail({ id }) {
+  const { addItem } = useCart();
   const [data, setData] = useState({ status: 'loading', product: null });
   const [talla, setTalla] = useState('');
-  const [aviso, setAviso] = useState('');
+  const [aviso, setAviso] = useState(null);
   const [imagenActiva, setImagenActiva] = useState(0);
 
   useEffect(() => {
@@ -71,13 +73,21 @@ function ProductDetail({ id }) {
 
   function handleSelect(nuevaTalla) {
     setTalla(nuevaTalla);
-    setAviso('');
+    setAviso(null);
   }
 
   function handleAgregar() {
-    setAviso(
-      `Elegiste la talla ${talla}. El carrito de compras estará disponible en el Sprint 2.`
-    );
+    const seleccion = product.tallas.find((t) => t.talla === talla);
+    const resultado = addItem({
+      productId: product.id,
+      nombre: product.nombre,
+      marca: product.marca,
+      imagen: product.imagenes[0] || null,
+      precio: product.precio,
+      talla,
+      stock: seleccion.stock,
+    });
+    setAviso({ tipo: resultado.ok ? 'ok' : 'error', texto: resultado.mensaje });
   }
 
   return (
@@ -133,8 +143,12 @@ function ProductDetail({ id }) {
             <p className="detail__hint">Selecciona una talla para agregar al carrito.</p>
           )}
           {aviso && (
-            <p className="detail__notice" role="status">
-              {aviso}
+            <p
+              className={`detail__notice${aviso.tipo === 'error' ? ' detail__notice--error' : ''}`}
+              role="status"
+            >
+              {aviso.texto}
+              {aviso.tipo === 'ok' && <Link to="/carrito">Ver carrito</Link>}
             </p>
           )}
         </div>
